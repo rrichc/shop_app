@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/product.dart';
+import 'package:shop_app/providers/product.dart';
 
 class Products with ChangeNotifier {
   List<Product> _items = [
@@ -37,10 +37,19 @@ class Products with ChangeNotifier {
     ),
   ];
 
+  //var _showFavoritesOnly = false;
+
   //Provides a COPY of the _items and not a direct reference to the _items, so that it cannot be accessed and modified outside the class.
   //If items are to be added, other classes must go through the addProduct() method so that it can notifyListeners(), and other listeners get updated info
   List<Product> get items {
+    // if (_showFavoritesOnly) {
+    //   return _items.where((prodItem) => prodItem.isFavorite).toList();
+    // }
     return [..._items];
+  }
+
+  List<Product> get favoriteItems {
+    return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
   void addProduct() {
@@ -51,4 +60,14 @@ class Products with ChangeNotifier {
   Product findById(String id) {
     return _items.firstWhere((product) => product.id == id);
   }
+
+  // void showFavoritesOnly() {
+  //   _showFavoritesOnly = true;
+  //   notifyListeners();
+  // }
+
+  // void showAll() {
+  //   _showFavoritesOnly = false;
+  //   notifyListeners();
+  // }
 }
