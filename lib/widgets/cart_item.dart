@@ -19,6 +19,30 @@ class CartItem extends StatelessWidget {
       onDismissed: (_) {
         cart.removeItem(productId);
       },
+      confirmDismiss: (_) {
+        return showDialog(
+          context: context,
+          //AlertDialog returns a Future which is needed by confirmDismiss. The Future must be of type bool, which is popped by the Navigators below.
+          builder: (ctx) => AlertDialog(
+            title: Text('Are you sure?'),
+            content: Text('Do you want to remove the item from the cart?'),
+            actions: <Widget>[
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(false);
+                },
+                child: Text('No'),
+              ),
+              FlatButton(
+                onPressed: () {
+                  Navigator.of(ctx).pop(true);
+                },
+                child: Text('Yes'),
+              ),
+            ],
+          ),
+        );
+      },
       direction: DismissDirection.endToStart,
       background: Container(
         color: Theme.of(context).errorColor,
