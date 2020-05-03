@@ -40,6 +40,11 @@ class Products with ChangeNotifier {
     // ),
   ];
 
+  final String authToken;
+  final String userId;
+
+  Products(this.authToken, this.userId, this._items);
+
   //var _showFavoritesOnly = false;
 
   //Provides a COPY of the _items and not a direct reference to the _items, so that it cannot be accessed and modified outside the class.
@@ -55,24 +60,37 @@ class Products with ChangeNotifier {
     return _items.where((prodItem) => prodItem.isFavorite).toList();
   }
 
-  Future<void> fetchAndSetProducts() async {
-    const url = 'https://max-flutter-course-2cae6.firebaseio.com/products.json';
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString =
+        filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    final url =
+        'https://max-flutter-course-2cae6.firebaseio.com/products.json?auth=$authToken&$filterString';
     try {
       final response = await http.get(url);
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if (extractedData == null) {
         return;
       }
+      final favoriteUrl =
+          'https://max-flutter-course-2cae6.firebaseio.com/userFavorites/$userId.json?auth=$authToken';
+      final favoriteResponse = await http.get(favoriteUrl);
+      final favoriteData = json.decode(favoriteResponse.body);
       final List<Product> loadedProducts = [];
-      extractedData.forEach((prodId, prodData) {
-        loadedProducts.add(Product(
-            id: prodId,
-            title: prodData['title'],
-            description: prodData['description'],
-            price: prodData['price'],
-            imageUrl: prodData['imageUrl'],
-            isFavorite: prodData['isFavorite']));
-      });
+      extractedData.forEach(
+        (prodId, prodData) {
+          loadedProducts.add(
+            Product(
+                id: prodId,
+                title: prodData['title'],
+                description: prodData['description'],
+                price: prodData['price'],
+                imageUrl: prodData['imageUrl'],
+                isFavorite: favoriteData == null
+                    ? false
+                    : favoriteData[prodId] ?? false),
+          );
+        },
+      );
       _items = loadedProducts;
       notifyListeners();
     } catch (error) {
@@ -82,7 +100,8 @@ class Products with ChangeNotifier {
 
   Future<void> addProduct(Product product) async {
     //Can't just pass the whole product in since we need to provide an ID. And you can't just reassign the ID since it's final.
-    const url = 'https://max-flutter-course-2cae6.firebaseio.com/products.json';
+    final url =
+        'https://max-flutter-course-2cae6.firebaseio.com/products.json?auth=$authToken';
     try {
       final response = await http.post(
         url,
@@ -91,7 +110,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'imageUrl': product.imageUrl,
           'price': product.price,
-          'isFavorite': product.isFavorite,
+          'creatorId': userId,
         }),
       );
       final newProduct = Product(
@@ -115,7 +134,7 @@ class Products with ChangeNotifier {
     final prodIndex = _items.indexWhere((prod) => prod.id == id);
     if (prodIndex >= 0) {
       final url =
-          'https://max-flutter-course-2cae6.firebaseio.com/products/$id.json';
+          'https://max-flutter-course-2cae6.firebaseio.com/products/$id.json?auth=$authToken';
       await http.patch(
         url,
         body: json.encode(
@@ -134,7 +153,7 @@ class Products with ChangeNotifier {
 
   Future<void> deleteProduct(String id) async {
     final url =
-        'https://max-flutter-course-2cae6.firebaseio.com/products/$id.json';
+        'https://max-flutter-course-2cae6.firebaseio.com/products/$id.json?auth=$authToken';
     final existingProductIndex = _items.indexWhere((prod) => prod.id == id);
     //grab a copy of the item to be deleted and store it in memory
     var existingProduct = _items[existingProductIndex];
