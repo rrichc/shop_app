@@ -1,6 +1,6 @@
 # shop_app
 
-A new Flutter project.
+This project must not be set to public since it has API keys embedded in the code.
 
 ## Getting Started
 
