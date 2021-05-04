@@ -6,6 +6,8 @@ This app was made through the completion of the course taught by [Maximilian Sch
  
 ## About the project
 The premise of the project centers around a cross platform mobile app (Android & iOS) that allows customers to browse shop items, add them to cart, and place an order. It also allows shop owners to add new items to the store for customers to buy.
+
+<img src="https://user-images.githubusercontent.com/9119721/117083353-5baf9580-acf9-11eb-8d0f-c7cde9046c67.png" height="450">
  
 ## Technologies Used
 - Dart language
