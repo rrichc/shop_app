@@ -38,6 +38,7 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(builder: (ctx, auth, child) {
         return MaterialApp(
+          initialRoute: 'initRoute',
           title: 'MyShop',
           theme: ThemeData(
             primarySwatch: Colors.purple,
