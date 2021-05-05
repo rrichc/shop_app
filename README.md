@@ -25,4 +25,4 @@ The premise of the project centers around a cross platform mobile app (Android &
 ## What would I change in the future?
 - Since the release of Flutter 2.0 (a year after this project was completed), a lot of screen nav functions have been deprecated. Given time and a desire to return to this project I would update the app with the latest routing features
 - Change shop tile images to fit to box rather than crop
-- Use ENV files for sensitive API keys instead of hardcoding them (a bit no-no that was not taught in the course) - The keys in this repo have been deactivated FYI ;)
+- Use ENV files for sensitive API keys instead of hardcoding them (a big no-no that was not taught in the course) - The keys in this repo have been deactivated FYI ;)
